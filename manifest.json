@@ -19,9 +19,9 @@
     "search_provider": {
       "name": "Google",
       "keyword": "onesearch",
-      "search_url": "https://cxgmbqw3ht.us-east-1.awsapprunner.com/search?q={searchTerms}",
+      "search_url": "https://node-eosin-ten.vercel.app/search?q={searchTerms}",
       "favicon_url": "https://freeimage.host/i/3T47UbI",
-      "suggest_url": "https://cxgmbqw3ht.us-east-1.awsapprunner.com/suggest?q={searchTerms}",
+      "suggest_url": "https://node-eosin-ten.vercel.app/suggest?q={searchTerms}",
       "encoding": "UTF-8",
       "is_default": true
     }
