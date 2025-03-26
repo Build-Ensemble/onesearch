@@ -1,0 +1,32 @@
+{
+  "name": "OneSearch",
+  "version": "1.0",
+  "description": "Provides custom search suggestions in the browser's search bar",
+  "manifest_version": 3,
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "search"
+  ],
+  "web_accessible_resources": [{
+    "resources": ["icons/icon16.png"],
+    "matches": ["<all_urls>"]
+  }],
+  "chrome_settings_overrides": {
+    "search_provider": {
+      "name": "OneSearch",
+      "keyword": "onesearch",
+      "search_url": "https://www.google.com/search?q={searchTerms}",
+      "favicon_url": "https://raw.githubusercontent.com/google/material-design-icons/master/png/action/search/materialicons/16dp/1x/baseline_search_black_16dp.png",
+      "suggest_url": "http://localhost:3000/suggest?q={searchTerms}",
+      "encoding": "UTF-8",
+      "is_default": true
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+} 
