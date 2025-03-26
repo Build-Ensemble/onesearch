@@ -18,9 +18,31 @@ app.get('/suggest', (req, res) => {
     return res.json([]);
   }
   
-  // Extended format with more metadata
-  const suggestions = ["https://tryensemble.com", "AI assistants", "Productivity tools"];
-  const descriptions = ["Visit Ensemble - AI assistant", "Latest AI assistants in 2024", "Top productivity tools"];
+  // Each suggestion includes a suffix annotation that indicates the search provider
+  const suggestions = [
+    query,                     // Default Google search (no suffix)
+    query + " - ChatGPT",
+    query + " - YouTube",
+    query + " - GitHub",
+    query + " - Wikipedia"
+  ];
+  
+  const descriptions = [
+    "Search Google for " + query,
+    "Ask ChatGPT about " + query,
+    "Search YouTube for " + query,
+    "Find repositories on GitHub for " + query,
+    "Look up on Wikipedia: " + query
+  ];
+  
+  // URLs that will be displayed in some browsers
+  const urls = [
+    "https://www.google.com/search?q=" + encodeURIComponent(query),
+    "https://chat.openai.com/?q=" + encodeURIComponent(query),
+    "https://www.youtube.com/results?search_query=" + encodeURIComponent(query),
+    "https://github.com/search?q=" + encodeURIComponent(query),
+    "https://en.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(query)
+  ];
   
   // Format with additional metadata
   res.setHeader('Content-Type', 'application/x-suggestions+json; charset=UTF-8');
@@ -28,11 +50,7 @@ app.get('/suggest', (req, res) => {
     query,
     suggestions,
     descriptions,
-    [
-    "https://tryensemble.com",
-    "https://tryensemble.com",
-    "https://tryensemble.com",
-    ]
+    urls
   ]);
 });
 
@@ -42,28 +60,51 @@ app.get('/search', (req, res) => {
   console.log(`Received search request for: ${query}`);
   
   let searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+  let searchQuery = query;
   
-  // You can dynamically determine which search engine to use based on:
-  // 1. Query prefixes like "yt:" for YouTube
-  // 2. User preferences stored in a database
-  // 3. Time of day, geography, or other contextual factors
+  // Parse the suffix annotations to determine which search engine to use
+  if (query.endsWith(' - ChatGPT')) {
+    searchQuery = query.substring(0, query.length - 10);
+    searchUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(searchQuery);
+  } else if (query.endsWith(' - YouTube')) {
+    searchQuery = query.substring(0, query.length - 10);
+    searchUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery);
+  } else if (query.endsWith(' - GitHub')) {
+    searchQuery = query.substring(0, query.length - 9);
+    searchUrl = 'https://github.com/search?q=' + encodeURIComponent(searchQuery);
+  } else if (query.endsWith(' - Wikipedia')) {
+    searchQuery = query.substring(0, query.length - 12);
+    searchUrl = 'https://en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(searchQuery);
+  }
   
-  if (query.startsWith('yt:')) {
-    // YouTube search
-    const ytQuery = query.substring(3);
-    searchUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(ytQuery);
+  // For backward compatibility, also handle the old prefix formats
+  else if (query.startsWith('Google - ')) {
+    searchQuery = query.substring(9);
+    searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(searchQuery);
+  } else if (query.startsWith('YouTube - ')) {
+    searchQuery = query.substring(10);
+    searchUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery);
+  } else if (query.startsWith('GitHub - ')) {
+    searchQuery = query.substring(9);
+    searchUrl = 'https://github.com/search?q=' + encodeURIComponent(searchQuery);
+  } else if (query.startsWith('Wikipedia - ')) {
+    searchQuery = query.substring(12);
+    searchUrl = 'https://en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(searchQuery);
+  } else if (query.startsWith('ChatGPT - ')) {
+    searchQuery = query.substring(10);
+    searchUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(searchQuery);
+  } else if (query.startsWith('yt:')) {
+    searchQuery = query.substring(3);
+    searchUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery);
   } else if (query.startsWith('gh:')) {
-    // GitHub search
-    const ghQuery = query.substring(3);
-    searchUrl = 'https://github.com/search?q=' + encodeURIComponent(ghQuery);
+    searchQuery = query.substring(3);
+    searchUrl = 'https://github.com/search?q=' + encodeURIComponent(searchQuery);
   } else if (query.startsWith('wiki:')) {
-    // Wikipedia search
-    const wikiQuery = query.substring(5);
-    searchUrl = 'https://en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(wikiQuery);
+    searchQuery = query.substring(5);
+    searchUrl = 'https://en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(searchQuery);
   } else if (query.startsWith('ai:') || query.startsWith('chatgpt:')) {
-    // ChatGPT query
-    const aiQuery = query.startsWith('ai:') ? query.substring(3) : query.substring(8);
-    searchUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(aiQuery);
+    searchQuery = query.startsWith('ai:') ? query.substring(3) : query.substring(8);
+    searchUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(searchQuery);
   }
   
   // Redirect to the dynamically determined search URL
@@ -83,6 +124,6 @@ if (require.main === module) {
   console.log(`http://localhost:${port}/suggest?q=something_else`);
   console.log('To test search redirects, try:');
   console.log(`http://localhost:${port}/search?q=weather`);
-  console.log(`http://localhost:${port}/search?q=yt:cats`);
-  console.log(`http://localhost:${port}/search?q=gh:react`);
+  console.log(`http://localhost:${port}/search?q=cats - YouTube`);
+  console.log(`http://localhost:${port}/search?q=react - GitHub`);
 } 
