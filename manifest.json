@@ -19,9 +19,9 @@
     "search_provider": {
       "name": "Google",
       "keyword": "onesearch",
-      "search_url": "https://cxgmbqw3ht.us-east-1.awsapprunner.com/search?q={searchTerms}",
-      "favicon_url": "https://cxgmbqw3ht.us-east-1.awsapprunner.com/icons/icon16.png",
-      "suggest_url": "https://cxgmbqw3ht.us-east-1.awsapprunner.com/suggest?q={searchTerms}",
+      "search_url": "https://onesearch.ensemble-technologies.com/search?q={searchTerms}",
+      "favicon_url": "https://onesearch.ensemble-technologies.com/icons/icon16.png",
+      "suggest_url": "https://onesearch.ensemble-technologies.com/suggest?q={searchTerms}",
       "encoding": "UTF-8",
       "is_default": true
     }
