@@ -19,8 +19,8 @@
     "search_provider": {
       "name": "OneSearch",
       "keyword": "onesearch",
-      "search_url": "https://www.google.com/search?q={searchTerms}",
-      "favicon_url": "https://raw.githubusercontent.com/google/material-design-icons/master/png/action/search/materialicons/16dp/1x/baseline_search_black_16dp.png",
+      "search_url": "http://localhost:3000/search?q={searchTerms}",
+      "favicon_url": "https://freeimage.host/i/3T47UbI",
       "suggest_url": "http://localhost:3000/suggest?q={searchTerms}",
       "encoding": "UTF-8",
       "is_default": true
