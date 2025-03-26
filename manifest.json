@@ -17,7 +17,7 @@
   }],
   "chrome_settings_overrides": {
     "search_provider": {
-      "name": "OneSearch",
+      "name": "Google",
       "keyword": "onesearch",
       "search_url": "http://localhost:3000/search?q={searchTerms}",
       "favicon_url": "https://freeimage.host/i/3T47UbI",

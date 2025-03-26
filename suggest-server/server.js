@@ -22,6 +22,7 @@ app.get('/suggest', (req, res) => {
   const suggestions = [
     query,                     // Default Google search (no suffix)
     query + " - ChatGPT",
+    query + " - LinkedIn",
     query + " - YouTube",
     query + " - GitHub",
     query + " - Wikipedia"
@@ -30,6 +31,7 @@ app.get('/suggest', (req, res) => {
   const descriptions = [
     "Search Google for " + query,
     "Ask ChatGPT about " + query,
+    "Search LinkedIn for " + query,
     "Search YouTube for " + query,
     "Find repositories on GitHub for " + query,
     "Look up on Wikipedia: " + query
@@ -39,6 +41,7 @@ app.get('/suggest', (req, res) => {
   const urls = [
     "https://www.google.com/search?q=" + encodeURIComponent(query),
     "https://chat.openai.com/?q=" + encodeURIComponent(query),
+    "https://www.linkedin.com/search/results/all/?keywords=" + encodeURIComponent(query),
     "https://www.youtube.com/results?search_query=" + encodeURIComponent(query),
     "https://github.com/search?q=" + encodeURIComponent(query),
     "https://en.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(query)
@@ -75,6 +78,9 @@ app.get('/search', (req, res) => {
   } else if (query.endsWith(' - Wikipedia')) {
     searchQuery = query.substring(0, query.length - 12);
     searchUrl = 'https://en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(searchQuery);
+  } else if (query.endsWith(' - LinkedIn')) {
+    searchQuery = query.substring(0, query.length - 11);
+    searchUrl = 'https://www.linkedin.com/search/results/all/?keywords=' + encodeURIComponent(searchQuery);
   }
   
   // For backward compatibility, also handle the old prefix formats
@@ -93,6 +99,9 @@ app.get('/search', (req, res) => {
   } else if (query.startsWith('ChatGPT - ')) {
     searchQuery = query.substring(10);
     searchUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(searchQuery);
+  } else if (query.startsWith('LinkedIn - ')) {
+    searchQuery = query.substring(11);
+    searchUrl = 'https://www.linkedin.com/search/results/all/?keywords=' + encodeURIComponent(searchQuery);
   } else if (query.startsWith('yt:')) {
     searchQuery = query.substring(3);
     searchUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery);
@@ -105,6 +114,9 @@ app.get('/search', (req, res) => {
   } else if (query.startsWith('ai:') || query.startsWith('chatgpt:')) {
     searchQuery = query.startsWith('ai:') ? query.substring(3) : query.substring(8);
     searchUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(searchQuery);
+  } else if (query.startsWith('li:') || query.startsWith('in:')) {
+    searchQuery = query.startsWith('li:') ? query.substring(3) : query.substring(3);
+    searchUrl = 'https://www.linkedin.com/search/results/all/?keywords=' + encodeURIComponent(searchQuery);
   }
   
   // Redirect to the dynamically determined search URL
