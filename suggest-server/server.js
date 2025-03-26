@@ -3,11 +3,15 @@
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 const port = 8080;
 
 // Enable CORS for all routes
 app.use(cors());
+
+// Serve static files from the icons directory
+app.use('/icons', express.static(path.join(__dirname, '../icons')));
 
 // Suggestion endpoint
 app.get('/suggest', (req, res) => {
