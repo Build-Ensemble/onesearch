@@ -1,11 +1,8 @@
-// Mock server implementation for OneSearch suggestions
-// In a real implementation, this would be deployed to https://suggest.onesearch.com/suggest
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const app = express();
-const port = 8080;
+const port = 3000;
 
 // Enable CORS for all routes
 app.use(cors());
