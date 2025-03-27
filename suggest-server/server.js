@@ -102,7 +102,7 @@ app.get('/search', (req, res) => {
     event: 'search_request',
     properties: { provider: searchProvider }
   });
-  
+  client.shutdown()
   // Redirect to the dynamically determined search URL
   res.redirect(searchUrl);
 });
