@@ -1,8 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const { PostHog } = require('posthog-node');
 const app = express();
 const port = 3000;
+
+const client = new PostHog(
+    'phc_pFuB6p8luyjCXIYH3mbtxuYow6kYbPURhX87qtj7vwU',
+    { host: 'https://us.i.posthog.com' }
+);
 
 // Enable CORS for all routes
 app.use(cors());
@@ -14,7 +20,7 @@ app.use('/icons', express.static(path.join(__dirname, '../icons')));
 app.get('/suggest', (req, res) => {
   const query = req.query.q || '';
   console.log(`Received suggestion request for: ${query}`);
-  
+
   if (!query) {
     return res.json([]);
   }
@@ -65,24 +71,37 @@ app.get('/search', (req, res) => {
   
   let searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(query);
   let searchQuery = query;
+  let searchProvider = 'google';
   
   // Parse the suffix annotations to determine which search engine to use
   if (query.endsWith(' - ChatGPT')) {
     searchQuery = query.substring(0, query.length - 10);
     searchUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(searchQuery);
+    searchProvider = 'chatgpt';
   } else if (query.endsWith(' - YouTube')) {
     searchQuery = query.substring(0, query.length - 10);
     searchUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery);
+    searchProvider = 'youtube';
   } else if (query.endsWith(' - GitHub')) {
     searchQuery = query.substring(0, query.length - 9);
     searchUrl = 'https://github.com/search?q=' + encodeURIComponent(searchQuery);
+    searchProvider = 'github';
   } else if (query.endsWith(' - Wikipedia')) {
     searchQuery = query.substring(0, query.length - 12);
     searchUrl = 'https://en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(searchQuery);
+    searchProvider = 'wikipedia';
   } else if (query.endsWith(' - LinkedIn')) {
     searchQuery = query.substring(0, query.length - 11);
     searchUrl = 'https://www.linkedin.com/search/results/all/?keywords=' + encodeURIComponent(searchQuery);
+    searchProvider = 'linkedin';
   }
+  
+  // Track search request with only the provider
+  client.capture({
+    distinctId: req.ip,
+    event: 'search_request',
+    properties: { provider: searchProvider }
+  });
   
   // Redirect to the dynamically determined search URL
   res.redirect(searchUrl);
